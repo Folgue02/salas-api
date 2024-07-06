@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: "postgres:latest"
+    container_name: database
+    environment:
+      POSTGRES_USER: salas_api
+      POSTGRES_PASSWORD: salas1234
+      POSTGRES_DB: salasdb
+    ports:
+      - "5432:5432"
+

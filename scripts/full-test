@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+from cursesmenu import CursesMenu
+from cursesmenu.items import FunctionItem
+from typing import Any
+from colorama import init
+from termcolor import colored
+from urllib.parse import urljoin
+import datetime
+import requests
+import json
+init()
+
+URL = "http://localhost:8080/"
+DATE_FORMAT = "%d-%m-%Y %H:%M"
+
+def printe(*msgs: object):
+    for msg in msgs:
+        msg = str(msg)
+        [print(f"{colored('ERROR  ', 'red')}: {line}") for line in msg.split('\n')]
+
+def printw(*msgs: object):
+    for msg in msgs:
+        msg = str(msg)
+        [print(f"{colored('WARNING', 'yellow')}: {line}") for line in msg.split('\n')]
+
+def printl(*msgs: object):
+    for msg in msgs:
+        msg = str(msg)
+        [print(f"{colored('LOG    ', 'green')}: {line}") for line in msg.split('\n')]
+
+def enter_to_continue():
+    input("Press <Enter> to continue...")
+
+def ask_for_date(msg: str) -> str:
+    while True:
+        date_str = input(msg)
+        try:
+            datetime.datetime.strptime(date_str, DATE_FORMAT)
+            return date_str
+        except:
+            printw(f"La fecha que has escrito no sigue el formato que se requiere ({DATE_FORMAT})")
+
+def do_request(endpoint: str, method: str, url_params: dict[str, Any] = {}):
+    target_url = urljoin(URL, endpoint)
+    res: requests.Response
+    try:
+
+        match method.lower():
+            case "get":
+                res = requests.get(target_url, params=url_params)
+            case "post":
+                res = requests.post(target_url, params=url_params)
+            case "delete":
+                res = requests.delete(target_url, params=url_params)
+            case "put":
+                res = requests.put(target_url, params=url_params)
+            case _:
+                raise Exception(f"'{method}' is not recognized as a valid method")
+    except Exception as e:
+        printe(f"An error has occurred: {e}")
+        return
+
+    printl(f"=======> Request to '{colored(res.url, 'green')}'")
+    printl(f"Status code: {colored(res.status_code, 'green' if res.status_code == 200 else 'red')}")
+
+    if res.headers.get("Content-Type", "") == "application/json":
+        printl("==> Json contents of the response: ")
+        printl(json.dumps(res.json(), indent=2))
+    else:
+        printl("==> Body of the response: ")
+        printl(res.content.decode("utf-8"))
+
+# ###############
+# Request methods
+# ###############
+
+def query_all_rooms():
+    do_request("/salas/", "get")
+    enter_to_continue()
+
+def query_room_by_id():
+    do_request(f"/salas/{input('ID de la sala: ')}", "get")
+    enter_to_continue()
+
+def create_room():
+    name = input("Nombre de la sala: ")
+    capacity = input("Capacidad de la sala: ")
+    location = input("Ubicacion de la sala: ")
+    params = {
+        "name": name,
+        "capacity": capacity,
+        "location": location
+    }
+    do_request(f"/salas/", "post", params)
+    enter_to_continue()
+
+def update_room():
+    name = input("Nombre de la sala: ")
+    capacity = input("Capacidad de la sala: ")
+    location = input("Ubicacion de la sala: ")
+    params = {
+        "name": name,
+        "capacity": capacity,
+        "location": location
+    }
+    do_request(f"/salas/{input('ID de la sala a modificar: ')}", "put", params)
+    enter_to_continue()
+
+def delete_room():
+    room_id = input("ID de la sala a eliminar: ")
+    do_request(f"/salas/{room_id}", "delete")
+    enter_to_continue()
+
+def query_all_bookings():
+    do_request(f"/reservas/", "get")
+    enter_to_continue()
+
+def query_booking_by_id():
+    booking_id = input("ID de la reserva: ")
+    do_request(f"/reservas/{booking_id}", "get")
+    enter_to_continue()
+
+def create_booking():
+    room_id = input("ID de la sala a reservar: ")
+    organizer = input("Nombre del organizador: ")
+    start_date = ask_for_date("Fecha de comienzo: ")
+    end_date = ask_for_date("Fecha de fin: ")
+    do_request(
+        f"/reservas/",
+        "post",
+        {
+            "roomId": room_id,
+            "organizer": organizer,
+            "startDate": start_date,
+            "endDate": end_date
+        }
+    )
+    enter_to_continue()
+
+def update_booking():
+    booking_id = input("ID de la reserva a actualizar: ")
+    room_id = input("ID de la sala a reservar: ")
+    organizer = input("Nombre del organizador: ")
+    start_date = ask_for_date("Fecha de comienzo: ")
+    end_date = ask_for_date("Fecha de fin: ")
+    do_request(
+        f"/reservas/{booking_id}",
+        "put",
+        {
+            "roomId": room_id,
+            "organizer": organizer,
+            "startDate": start_date,
+            "endDate": end_date
+        }
+    )
+    enter_to_continue()
+
+def delete_booking():
+    booking_id = input("ID de la reserva a borrar: ")
+    do_request(f"/reservas/{booking_id}", "delete")
+    enter_to_continue()
+
+def main():
+    menu = CursesMenu("Cliente de gestion de salas y reservas")
+    menu.append_item(FunctionItem("Obtener salas", query_all_rooms))
+    menu.append_item(FunctionItem("Obtener sala por ID", query_room_by_id))
+    menu.append_item(FunctionItem("Crear sala", create_room))
+    menu.append_item(FunctionItem("Actualizar sala", update_room))
+    menu.append_item(FunctionItem("Eliminar sala", delete_room))
+    menu.append_item(FunctionItem("Obtener todas las reservas", query_all_bookings))
+    menu.append_item(FunctionItem("Obtener reserva por ID", query_booking_by_id))
+    menu.append_item(FunctionItem("Crear reserva", create_booking))
+    menu.append_item(FunctionItem("Actualizar reserva", update_booking))
+    menu.append_item(FunctionItem("Borrar reserva", delete_booking))
+    menu.show()
+
+if __name__ == "__main__":
+    main()
