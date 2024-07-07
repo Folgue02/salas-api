@@ -7,9 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,7 @@ import me.folgue.salas.salas.Sala;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Reserva {
+public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +33,12 @@ public class Reserva {
     @Nonnull
     private LocalDateTime endDate;
 
-    @OneToOne
-    @JoinColumn(name = "room", unique = true)
+    @ManyToOne
+    @JoinColumn(name = "room_id")
     @JsonManagedReference
     private Sala room;
 
-    public Reserva(String organizer, LocalDateTime startDate, LocalDateTime endDate, Sala room) {
+    public Booking(String organizer, LocalDateTime startDate, LocalDateTime endDate, Sala room) {
         this.organizer = organizer;
         this.startDate = startDate;
         this.endDate = endDate;

@@ -7,11 +7,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.folgue.salas.reservas.Reserva;
+import me.folgue.salas.reservas.Booking;
 
 @Entity
 @NoArgsConstructor
@@ -41,9 +42,9 @@ public class Sala {
      */
     private String location;
 
-    @OneToOne(mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JsonBackReference
-    private Reserva booking;
+    private List<Booking> bookings;
 
     /**
      * Creates an instance of a {@link Sala} with its ID set to 0.

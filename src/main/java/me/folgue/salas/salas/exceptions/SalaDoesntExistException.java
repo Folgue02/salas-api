@@ -15,7 +15,7 @@ public class SalaDoesntExistException extends SalaControllerException {
      * @param salaID ID of the room that already exists.
      */
     public SalaDoesntExistException(long salaID) {
-        super(String.format("La sala con el ID %d ya existe.", salaID));
+        super(String.format("La sala con el ID %d no existe.", salaID));
         this.salaID = salaID;
     }
 
