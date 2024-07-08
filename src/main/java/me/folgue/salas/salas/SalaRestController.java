@@ -24,46 +24,97 @@ import org.springframework.web.bind.annotation.RestController;
 @Log
 public class SalaRestController {
 
-    private final SalaRepository salaRepository;
+    private final RoomService service;
 
-    public SalaRestController(SalaRepository salaRepository) {
-        this.salaRepository = salaRepository;
+    public SalaRestController(RoomService service) {
+        this.service = service;
     }
 
+    /**
+     * @return A list of all the rooms stored in the database.
+     */
     @GetMapping("/")
     public List<Sala> getAllSalas() {
-        return this.salaRepository.findAll();
+        return this.service.getAllRooms();
     }
 
+    /**
+     * Returns a room with the given id.
+     *
+     * @param roomId Id of the room to be returned.
+     * @return Room associated with the id specified.
+     * @throws SalaControllerException If there is no room with such id.
+     */
     @GetMapping("/{id}")
-    public Sala getSalaById(@PathVariable("id") Long salaID) throws Exception {
-        log.info(String.format("Attemping to check room with ID %d", salaID));
-        return this.salaRepository.findBySalaID(salaID).orElseThrow(() -> new SalaDoesntExistException(salaID));
+    public Sala getRoomById(@PathVariable("id") Long roomId) throws SalaControllerException {
+        log.info(String.format("Attemping to check room with ID %d", roomId));
+        return this.service.findRoomById(roomId).orElseThrow(() -> new SalaDoesntExistException(roomId));
     }
 
+    /**
+     * Creates a new room with the information specified.
+     *
+     * @param name Name of the new room.
+     * @param capacity Capacity of the new room.
+     * @param location Location of the new room.
+     * @return The room created by the function.
+     * @see Sala
+     * @throws SalaControllerException If the capacity number of the room is
+     * invalid or the location doesn't follow the valid format ({@link Sala}).
+     */
     @PostMapping("/")
     public Sala createSala(@RequestParam String name, @RequestParam Integer capacity, @RequestParam String location) throws SalaControllerException {
-        var sala = new Sala(name, capacity, location);
-        this.salaRepository.save(sala);
-        return sala;
+        if (!Sala.isValidLocation(location)) {
+            throw new SalaInvalidLocationException(location);
+        }
+
+        if (capacity < 1) {
+            throw new SalaInvalidCapacityException(capacity);
+        }
+
+        var room = new Sala(name, capacity, location);
+        room = this.service.save(room);
+        log.info(String.format("New room with id '%d' created.", room.getId()));
+        return room;
     }
 
+    /**
+     * Removes the room with the given Id.
+     *
+     * @param roomId Id of the room to remove.
+     * @return The room that has been removed.
+     * @throws SalaControllerException If the room doesn't exist.
+     */
     @DeleteMapping("/{id}")
-    public void deleteSala(@PathVariable("id") Long salaID) throws Exception {
-        this.salaRepository.delete(
-                this.salaRepository.findBySalaID(salaID)
-                        .orElseThrow(() -> new SalaDoesntExistException(salaID))
+    public Sala deleteSala(@PathVariable("id") Long roomId) throws SalaControllerException {
+        Sala room = this.service.findRoomById(roomId)
+                .orElseThrow(() -> new SalaDoesntExistException(roomId));
+        this.service.delete(
+                room.getId()
         );
+        log.info(String.format("Room with id '%d' was removed.", room.getId()));
+        return room;
     }
 
-    @PutMapping("/{id}")
+    /**
+     * Updates a room of the given id with the new information.
+     *
+     * @param roomId Id of the room to update.
+     * @param name New name of the room.
+     * @param capacity New capacity of the room.
+     * @param location New location of the room.
+     * @return The new object of the room updated.
+     * @throws SalaControllerException If there is no room with such id, the new
+     * capacity is invalid, or the location's format is invalid.
+     */
+    @PutMapping("/{roomId}")
     public Sala updateSala(
-            @PathVariable Long id,
+            @PathVariable Long roomId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer capacity,
             @RequestParam(required = false) String location
     ) throws SalaControllerException {
-        Sala sala = this.salaRepository.findById(id).orElseThrow(() -> new SalaDoesntExistException(id));
+        Sala sala = this.service.findRoomById(roomId).orElseThrow(() -> new SalaDoesntExistException(roomId));
 
         if (name != null) {
             sala.setName(name);
@@ -83,7 +134,8 @@ public class SalaRestController {
             sala.setLocation(location);
         }
 
-        log.info(String.format("Updating room with id '%d', new name '%s', new capacity'%s' and new location '%s'", id, name, capacity, location));
+        log.info(String.format("Updating room with id '%d', new name '%s', new capacity'%s' and new location '%s'", roomId, name, capacity, location));
+        sala = this.service.save(sala);
         return sala;
     }
 
@@ -98,4 +150,17 @@ public class SalaRestController {
     public String handleDoesntExistsException(SalaDoesntExistException e) {
         return String.format("No existe una sala con el ID %d", e.getSalaID());
     }
+
+    @ExceptionHandler(SalaInvalidLocationException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public String handleDoesntExistsException(SalaInvalidLocationException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(SalaInvalidCapacityException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public String handleDoesntExistsException(SalaInvalidCapacityException e) {
+        return e.getMessage();
+    }
+
 }

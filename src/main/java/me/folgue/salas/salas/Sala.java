@@ -1,6 +1,6 @@
 package me.folgue.salas.salas;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class Sala {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long salaID;
+    private Long id;
 
     @Nonnull
     /**
@@ -43,8 +43,8 @@ public class Sala {
     private String location;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Booking> bookings;
+    @JsonIgnore
+    private Set<Booking> bookings;
 
     /**
      * Creates an instance of a {@link Sala} with its ID set to 0.
@@ -54,7 +54,7 @@ public class Sala {
      * @param location The location of the room.
      */
     public Sala(String name, int capacity, String location) {
-        this.salaID = 0L;
+        this.id = 0L;
         this.name = name;
         this.capacity = capacity;
         this.location = location;

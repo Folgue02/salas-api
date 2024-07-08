@@ -60,7 +60,7 @@ def do_request(endpoint: str, method: str, url_params: dict[str, Any] = {}):
         printe(f"An error has occurred: {e}")
         return
 
-    printl(f"=======> Request to '{colored(res.url, 'green')}'")
+    printl(f"=======> {colored(method, 'green')} request to '{colored(res.url, 'green')}'")
     printl(f"Status code: {colored(res.status_code, 'green' if res.status_code == 200 else 'red')}")
 
     if res.headers.get("Content-Type", "") == "application/json":
@@ -160,6 +160,11 @@ def delete_booking():
     do_request(f"/reservas/{booking_id}", "delete")
     enter_to_continue()
 
+def get_bookings_for_room():
+    room_id = input("ID de la sala: ")
+    do_request(f"/reservas/sala/{room_id}", "get")
+    enter_to_continue()
+
 def main():
     menu = CursesMenu("Cliente de gestion de salas y reservas")
     menu.append_item(FunctionItem("Obtener salas", query_all_rooms))
@@ -172,6 +177,7 @@ def main():
     menu.append_item(FunctionItem("Crear reserva", create_booking))
     menu.append_item(FunctionItem("Actualizar reserva", update_booking))
     menu.append_item(FunctionItem("Borrar reserva", delete_booking))
+    menu.append_item(FunctionItem("Obtener reservas para una sala", get_bookings_for_room))
     menu.show()
 
 if __name__ == "__main__":

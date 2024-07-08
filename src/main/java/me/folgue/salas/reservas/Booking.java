@@ -1,6 +1,5 @@
 package me.folgue.salas.reservas;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +13,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.folgue.salas.salas.Sala;
 
+/**
+ * Represents the booking of a {@link Sala} in specified range of time.
+ *
+ * @see Sala
+ * @author Folgue02
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,7 +40,6 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "room_id")
-    @JsonManagedReference
     private Sala room;
 
     public Booking(String organizer, LocalDateTime startDate, LocalDateTime endDate, Sala room) {

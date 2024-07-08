@@ -2,6 +2,7 @@ package me.folgue.salas.salas;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,8 +14,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SalaRepository extends JpaRepository<Sala, Long> {
 
-    List<Sala> findByName(String name);
+    Set<Sala> findByName(String name);
 
-    Optional<Sala> findBySalaID(Long id);
+    @Override
+    Optional<Sala> findById(Long id);
 
 }
