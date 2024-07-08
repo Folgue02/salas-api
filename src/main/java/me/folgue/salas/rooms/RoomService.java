@@ -1,17 +1,17 @@
-package me.folgue.salas.salas;
+package me.folgue.salas.rooms;
 
 import java.util.List;
 import java.util.Optional;
-import me.folgue.salas.reservas.BookingRepository;
+import me.folgue.salas.bookings.BookingRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RoomService {
 
-    private final SalaRepository repository;
+    private final RoomRepository repository;
     private final BookingRepository bookingRepository;
 
-    public RoomService(SalaRepository repository, BookingRepository bookingRepository) {
+    public RoomService(RoomRepository repository, BookingRepository bookingRepository) {
         this.repository = repository;
         this.bookingRepository = bookingRepository;
     }
@@ -23,14 +23,14 @@ public class RoomService {
      * @return An {@link Optional} containing the room if it exists, if not, an
      * empty {@link Optional} gets returned.
      */
-    public Optional<Sala> findRoomById(long roomId) {
+    public Optional<Room> findRoomById(long roomId) {
         return this.repository.findById(roomId);
     }
 
     /**
      * @return A list containing all the rooms stored in the database.
      */
-    public List<Sala> getAllRooms() {
+    public List<Room> getAllRooms() {
         return this.repository.findAll();
     }
 
@@ -40,7 +40,7 @@ public class RoomService {
      * @param room Room to be saved in the database.
      * @return The room that was saved.
      */
-    public Sala save(Sala room) {
+    public Room save(Room room) {
         return this.repository.save(room);
     }
 

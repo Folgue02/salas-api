@@ -1,14 +1,14 @@
-package me.folgue.salas.salas.exceptions;
+package me.folgue.salas.rooms.exceptions;
 
 /**
  *
  * @author folgue
  */
-public class SalaInvalidCapacityException extends SalaControllerException {
+public class RoomInvalidCapacityException extends RoomControllerException {
 
     private final Integer invalidCapacity;
 
-    public SalaInvalidCapacityException(int invalidCapacity) {
+    public RoomInvalidCapacityException(int invalidCapacity) {
         super(String.format("Invalid capacity specified: %d", invalidCapacity));
         this.invalidCapacity = invalidCapacity;
     }

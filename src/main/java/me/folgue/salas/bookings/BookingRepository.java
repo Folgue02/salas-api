@@ -1,4 +1,4 @@
-package me.folgue.salas.reservas;
+package me.folgue.salas.bookings;
 
 import java.util.List;
 import java.util.Optional;

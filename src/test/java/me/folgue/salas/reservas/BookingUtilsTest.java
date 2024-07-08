@@ -1,5 +1,6 @@
 package me.folgue.salas.reservas;
 
+import me.folgue.salas.bookings.BookingUtils;
 import java.time.LocalDateTime;
 import java.time.Month;
 import org.junit.jupiter.api.BeforeEach;

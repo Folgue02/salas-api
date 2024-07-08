@@ -1,17 +1,17 @@
-package me.folgue.salas.reservas;
+package me.folgue.salas.bookings;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.java.Log;
-import me.folgue.salas.reservas.exceptions.BookingConflictException;
-import me.folgue.salas.reservas.exceptions.BookingInvalidDatesException;
-import me.folgue.salas.reservas.exceptions.BookingControllerException;
-import me.folgue.salas.reservas.exceptions.BookingDoesntExistException;
-import me.folgue.salas.salas.RoomService;
-import me.folgue.salas.salas.Sala;
-import me.folgue.salas.salas.exceptions.SalaControllerException;
-import me.folgue.salas.salas.exceptions.SalaDoesntExistException;
+import me.folgue.salas.bookings.exceptions.BookingConflictException;
+import me.folgue.salas.bookings.exceptions.BookingInvalidDatesException;
+import me.folgue.salas.bookings.exceptions.BookingControllerException;
+import me.folgue.salas.bookings.exceptions.BookingDoesntExistException;
+import me.folgue.salas.rooms.RoomService;
+import me.folgue.salas.rooms.Room;
+import me.folgue.salas.rooms.exceptions.RoomControllerException;
+import me.folgue.salas.rooms.exceptions.RoomDoesntExistException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -55,7 +55,7 @@ public class BookingRestController {
      * @param endDate End of the booking.
      * @param roomId Id of the room to book.
      * @return The booking object generated.
-     * @throws SalaControllerException If there is no room with such ID.
+     * @throws RoomControllerException If there is no room with such ID.
      * @throws BookingControllerException If the range of dates for the booking
      * are invalid, or there is a conflict with a different booking of the same
      * room.
@@ -66,8 +66,8 @@ public class BookingRestController {
             @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") LocalDateTime startDate,
             @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") LocalDateTime endDate,
             @RequestParam Long roomId
-    ) throws SalaControllerException, BookingControllerException {
-        Sala room = this.roomService.findRoomById(roomId).orElseThrow(() -> new SalaDoesntExistException(roomId));
+    ) throws RoomControllerException, BookingControllerException {
+        Room room = this.roomService.findRoomById(roomId).orElseThrow(() -> new RoomDoesntExistException(roomId));
         Booking booking = new Booking(organizer, startDate, endDate, room);
 
         if (!startDate.isBefore(endDate)) {
@@ -106,7 +106,7 @@ public class BookingRestController {
      * @param endDateOptional New end of the booking.
      * @param roomId ID of the new room be booked.
      * @return
-     * @throws SalaControllerException If the new room specified doesn't exist.
+     * @throws RoomControllerException If the new room specified doesn't exist.
      * @throws BookingControllerException If the new dates have a conflict with
      * a different booking for the same room or the date range is invalid.
      */
@@ -117,20 +117,23 @@ public class BookingRestController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") LocalDateTime startDateOptional,
             @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") LocalDateTime endDateOptional,
             @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") Long roomId
-    ) throws SalaControllerException, BookingControllerException {
+    ) throws RoomControllerException, BookingControllerException {
         Booking booking = this.bookingService.findById(bookingId).orElseThrow(() -> new BookingDoesntExistException(bookingId));
         LocalDateTime startDate = startDateOptional == null ? booking.getStartDate() : startDateOptional;
         LocalDateTime endDate = endDateOptional == null ? booking.getEndDate() : endDateOptional;
 
-        Sala room;
+        Room room;
 
         if (roomId != null) {
-            room = this.roomService.findRoomById(roomId).orElseThrow(() -> new SalaDoesntExistException(roomId));
+            room = this.roomService.findRoomById(roomId).orElseThrow(() -> new RoomDoesntExistException(roomId));
         } else {
             room = booking.getRoom();
         }
 
-        List<Booking> conflictedBookings = this.bookingService.getBookingsForRoomInRange(room.getId(), startDate, endDate);
+        List<Booking> conflictedBookings = this.bookingService.getBookingsForRoomInRange(room.getId(), startDate, endDate)
+                .stream()
+                .filter(b -> !b.getId().equals(room.getId()))
+                .toList();
 
         if (!conflictedBookings.isEmpty()) {
             throw new BookingConflictException(
@@ -190,7 +193,7 @@ public class BookingRestController {
      * @return {@code true} if the room is booked between {@code startDate} and
      * {@code endDate}, otherwise, {@code false}
      */
-    public boolean isRoomAvailable(Sala room, LocalDateTime startDate, LocalDateTime endDate) {
+    public boolean isRoomAvailable(Room room, LocalDateTime startDate, LocalDateTime endDate) {
         return room.getBookings().stream()
                 .noneMatch(b -> (b.getStartDate().isAfter(startDate) && b.getEndDate().isAfter(endDate))
                 || (b.getStartDate().isAfter(endDate) && b.getEndDate().isBefore(endDate)));
@@ -208,9 +211,9 @@ public class BookingRestController {
         return e.getMessage();
     }
 
-    @ExceptionHandler(SalaDoesntExistException.class)
+    @ExceptionHandler(RoomDoesntExistException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleRoomDoesntExist(SalaDoesntExistException e) {
+    public String handleRoomDoesntExist(RoomDoesntExistException e) {
         return e.getMessage();
     }
 

@@ -1,4 +1,4 @@
-package me.folgue.salas.salas;
+package me.folgue.salas.rooms;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
@@ -12,13 +12,13 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.folgue.salas.reservas.Booking;
+import me.folgue.salas.bookings.Booking;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Sala {
+public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +53,7 @@ public class Sala {
      * @param capacity Number of people that the room can hold during a meeting.
      * @param location The location of the room.
      */
-    public Sala(String name, int capacity, String location) {
+    public Room(String name, int capacity, String location) {
         this.id = 0L;
         this.name = name;
         this.capacity = capacity;
@@ -61,7 +61,7 @@ public class Sala {
     }
 
     /**
-     * Checks if the location of this {@link Sala} instance is valid.
+     * Checks if the location of this {@link Room} instance is valid.
      *
      * @see isValidLocation
      * @return <code>true</code> if it is, <code>false</code> if it isn't.

@@ -1,16 +1,16 @@
-package me.folgue.salas.salas.exceptions;
+package me.folgue.salas.rooms.exceptions;
 
 /**
  *
  * @author folgue
  */
-public abstract class SalaControllerException extends Exception {
+public abstract class RoomControllerException extends Exception {
 
     /**
      * Creates a new instance of <code>SalaControllerException</code> without
      * detail message.
      */
-    public SalaControllerException() {
+    public RoomControllerException() {
     }
 
     /**
@@ -19,7 +19,7 @@ public abstract class SalaControllerException extends Exception {
      *
      * @param msg the detail message.
      */
-    public SalaControllerException(String msg) {
+    public RoomControllerException(String msg) {
         super(msg);
     }
 }

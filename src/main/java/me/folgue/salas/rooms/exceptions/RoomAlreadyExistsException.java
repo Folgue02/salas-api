@@ -1,10 +1,10 @@
-package me.folgue.salas.salas.exceptions;
+package me.folgue.salas.rooms.exceptions;
 
 /**
  *
  * @author folgue
  */
-public class SalaAlreadyExistsException extends SalaControllerException {
+public class RoomAlreadyExistsException extends RoomControllerException {
 
     private final Long salaID;
 
@@ -14,7 +14,7 @@ public class SalaAlreadyExistsException extends SalaControllerException {
      *
      * @param salaID ID de la sala que se intento crear.
      */
-    public SalaAlreadyExistsException(long salaID) {
+    public RoomAlreadyExistsException(long salaID) {
         super(String.format("Ya existe una sala con el ID %d", salaID));
         this.salaID = salaID;
     }

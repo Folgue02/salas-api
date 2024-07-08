@@ -1,4 +1,4 @@
-package me.folgue.salas.reservas;
+package me.folgue.salas.bookings;
 
 import java.time.LocalDateTime;
 

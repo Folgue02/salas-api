@@ -1,12 +1,12 @@
-package me.folgue.salas.salas;
+package me.folgue.salas.rooms;
 
 import java.util.List;
 import lombok.extern.java.Log;
-import me.folgue.salas.salas.exceptions.SalaAlreadyExistsException;
-import me.folgue.salas.salas.exceptions.SalaControllerException;
-import me.folgue.salas.salas.exceptions.SalaDoesntExistException;
-import me.folgue.salas.salas.exceptions.SalaInvalidCapacityException;
-import me.folgue.salas.salas.exceptions.SalaInvalidLocationException;
+import me.folgue.salas.rooms.exceptions.RoomAlreadyExistsException;
+import me.folgue.salas.rooms.exceptions.RoomControllerException;
+import me.folgue.salas.rooms.exceptions.RoomDoesntExistException;
+import me.folgue.salas.rooms.exceptions.RoomInvalidCapacityException;
+import me.folgue.salas.rooms.exceptions.RoomInvalidLocationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/salas")
 @Log
-public class SalaRestController {
+public class RoomRestController {
 
     private final RoomService service;
 
-    public SalaRestController(RoomService service) {
+    public RoomRestController(RoomService service) {
         this.service = service;
     }
 
@@ -34,7 +34,7 @@ public class SalaRestController {
      * @return A list of all the rooms stored in the database.
      */
     @GetMapping("/")
-    public List<Sala> getAllSalas() {
+    public List<Room> getAllSalas() {
         return this.service.getAllRooms();
     }
 
@@ -43,12 +43,12 @@ public class SalaRestController {
      *
      * @param roomId Id of the room to be returned.
      * @return Room associated with the id specified.
-     * @throws SalaControllerException If there is no room with such id.
+     * @throws RoomControllerException If there is no room with such id.
      */
     @GetMapping("/{id}")
-    public Sala getRoomById(@PathVariable("id") Long roomId) throws SalaControllerException {
+    public Room getRoomById(@PathVariable("id") Long roomId) throws RoomControllerException {
         log.info(String.format("Attemping to check room with ID %d", roomId));
-        return this.service.findRoomById(roomId).orElseThrow(() -> new SalaDoesntExistException(roomId));
+        return this.service.findRoomById(roomId).orElseThrow(() -> new RoomDoesntExistException(roomId));
     }
 
     /**
@@ -58,21 +58,21 @@ public class SalaRestController {
      * @param capacity Capacity of the new room.
      * @param location Location of the new room.
      * @return The room created by the function.
-     * @see Sala
-     * @throws SalaControllerException If the capacity number of the room is
-     * invalid or the location doesn't follow the valid format ({@link Sala}).
+     * @see Room
+     * @throws RoomControllerException If the capacity number of the room is
+     * invalid or the location doesn't follow the valid format ({@link Room}).
      */
     @PostMapping("/")
-    public Sala createSala(@RequestParam String name, @RequestParam Integer capacity, @RequestParam String location) throws SalaControllerException {
-        if (!Sala.isValidLocation(location)) {
-            throw new SalaInvalidLocationException(location);
+    public Room createSala(@RequestParam String name, @RequestParam Integer capacity, @RequestParam String location) throws RoomControllerException {
+        if (!Room.isValidLocation(location)) {
+            throw new RoomInvalidLocationException(location);
         }
 
         if (capacity < 1) {
-            throw new SalaInvalidCapacityException(capacity);
+            throw new RoomInvalidCapacityException(capacity);
         }
 
-        var room = new Sala(name, capacity, location);
+        var room = new Room(name, capacity, location);
         room = this.service.save(room);
         log.info(String.format("New room with id '%d' created.", room.getId()));
         return room;
@@ -83,12 +83,12 @@ public class SalaRestController {
      *
      * @param roomId Id of the room to remove.
      * @return The room that has been removed.
-     * @throws SalaControllerException If the room doesn't exist.
+     * @throws RoomControllerException If the room doesn't exist.
      */
     @DeleteMapping("/{id}")
-    public Sala deleteSala(@PathVariable("id") Long roomId) throws SalaControllerException {
-        Sala room = this.service.findRoomById(roomId)
-                .orElseThrow(() -> new SalaDoesntExistException(roomId));
+    public Room deleteSala(@PathVariable("id") Long roomId) throws RoomControllerException {
+        Room room = this.service.findRoomById(roomId)
+                .orElseThrow(() -> new RoomDoesntExistException(roomId));
         this.service.delete(
                 room.getId()
         );
@@ -104,17 +104,17 @@ public class SalaRestController {
      * @param capacity New capacity of the room.
      * @param location New location of the room.
      * @return The new object of the room updated.
-     * @throws SalaControllerException If there is no room with such id, the new
+     * @throws RoomControllerException If there is no room with such id, the new
      * capacity is invalid, or the location's format is invalid.
      */
     @PutMapping("/{roomId}")
-    public Sala updateSala(
+    public Room updateSala(
             @PathVariable Long roomId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer capacity,
             @RequestParam(required = false) String location
-    ) throws SalaControllerException {
-        Sala sala = this.service.findRoomById(roomId).orElseThrow(() -> new SalaDoesntExistException(roomId));
+    ) throws RoomControllerException {
+        Room sala = this.service.findRoomById(roomId).orElseThrow(() -> new RoomDoesntExistException(roomId));
 
         if (name != null) {
             sala.setName(name);
@@ -122,14 +122,14 @@ public class SalaRestController {
 
         if (capacity != null) {
             if (capacity < 1) {
-                throw new SalaInvalidCapacityException(capacity);
+                throw new RoomInvalidCapacityException(capacity);
             }
             sala.setCapacity(capacity);
         }
 
         if (location != null) {
-            if (!Sala.isValidLocation(location)) {
-                throw new SalaInvalidLocationException(location);
+            if (!Room.isValidLocation(location)) {
+                throw new RoomInvalidLocationException(location);
             }
             sala.setLocation(location);
         }
@@ -139,27 +139,27 @@ public class SalaRestController {
         return sala;
     }
 
-    @ExceptionHandler(SalaAlreadyExistsException.class)
+    @ExceptionHandler(RoomAlreadyExistsException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT)
-    public String handleAlreadyExistsException(SalaAlreadyExistsException e) {
+    public String handleAlreadyExistsException(RoomAlreadyExistsException e) {
         return String.format("Ya existe una sala de codigo %d", e.getSalaID());
     }
 
-    @ExceptionHandler(SalaDoesntExistException.class)
+    @ExceptionHandler(RoomDoesntExistException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public String handleDoesntExistsException(SalaDoesntExistException e) {
+    public String handleDoesntExistsException(RoomDoesntExistException e) {
         return String.format("No existe una sala con el ID %d", e.getSalaID());
     }
 
-    @ExceptionHandler(SalaInvalidLocationException.class)
+    @ExceptionHandler(RoomInvalidLocationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public String handleDoesntExistsException(SalaInvalidLocationException e) {
+    public String handleDoesntExistsException(RoomInvalidLocationException e) {
         return e.getMessage();
     }
 
-    @ExceptionHandler(SalaInvalidCapacityException.class)
+    @ExceptionHandler(RoomInvalidCapacityException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public String handleDoesntExistsException(SalaInvalidCapacityException e) {
+    public String handleDoesntExistsException(RoomInvalidCapacityException e) {
         return e.getMessage();
     }
 

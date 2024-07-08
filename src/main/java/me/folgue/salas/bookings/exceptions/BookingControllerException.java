@@ -1,4 +1,4 @@
-package me.folgue.salas.reservas.exceptions;
+package me.folgue.salas.bookings.exceptions;
 
 /**
  *

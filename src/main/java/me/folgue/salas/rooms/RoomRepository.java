@@ -1,4 +1,4 @@
-package me.folgue.salas.salas;
+package me.folgue.salas.rooms;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Repository;
  * @author folgue
  */
 @Repository
-public interface SalaRepository extends JpaRepository<Sala, Long> {
+public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    Set<Sala> findByName(String name);
+    Set<Room> findByName(String name);
 
     @Override
-    Optional<Sala> findById(Long id);
+    Optional<Room> findById(Long id);
 
 }

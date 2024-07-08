@@ -1,4 +1,4 @@
-package me.folgue.salas.reservas;
+package me.folgue.salas.bookings;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.folgue.salas.salas.Sala;
+import me.folgue.salas.rooms.Room;
 
 /**
- * Represents the booking of a {@link Sala} in specified range of time.
+ * Represents the booking of a {@link Room} in specified range of time.
  *
- * @see Sala
+ * @see Room
  * @author Folgue02
  */
 @Entity
@@ -40,9 +40,9 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "room_id")
-    private Sala room;
+    private Room room;
 
-    public Booking(String organizer, LocalDateTime startDate, LocalDateTime endDate, Sala room) {
+    public Booking(String organizer, LocalDateTime startDate, LocalDateTime endDate, Room room) {
         this.organizer = organizer;
         this.startDate = startDate;
         this.endDate = endDate;
