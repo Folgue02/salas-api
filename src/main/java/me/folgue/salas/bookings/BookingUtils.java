@@ -22,4 +22,8 @@ public class BookingUtils {
     public static boolean isDateRangeInRange(LocalDateTime startDateA, LocalDateTime endDateA, LocalDateTime startDateB, LocalDateTime endDateB) {
         return !startDateA.isAfter(endDateB) && !endDateA.isBefore(startDateB);
     }
+
+    public static boolean isValidDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return !startDate.isEqual(endDate) && startDate.isBefore(endDate);
+    }
 }

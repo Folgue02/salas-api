@@ -70,7 +70,7 @@ public class BookingRestController {
         Room room = this.roomService.findRoomById(roomId).orElseThrow(() -> new RoomDoesntExistException(roomId));
         Booking booking = new Booking(organizer, startDate, endDate, room);
 
-        if (!startDate.isBefore(endDate)) {
+        if (!BookingUtils.isValidDateRange(startDate, endDate)) {
             throw new BookingInvalidDatesException(startDate, endDate);
         }
 
@@ -132,7 +132,7 @@ public class BookingRestController {
 
         List<Booking> conflictedBookings = this.bookingService.getBookingsForRoomInRange(room.getId(), startDate, endDate)
                 .stream()
-                .filter(b -> !b.getId().equals(room.getId()))
+                .filter(b -> !b.getRoom().getId().equals(roomId))
                 .toList();
 
         if (!conflictedBookings.isEmpty()) {
@@ -146,7 +146,7 @@ public class BookingRestController {
         }
 
         booking.setRoom(room);
-        if (!startDate.isBefore(endDate)) {
+        if (!BookingUtils.isValidDateRange(startDate, endDate)) {
             throw new BookingInvalidDatesException(startDate, endDate);
         }
 

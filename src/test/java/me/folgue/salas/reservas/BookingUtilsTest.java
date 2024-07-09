@@ -65,4 +65,27 @@ public class BookingUtilsTest {
         assertFalse(BookingUtils.isDateRangeInRange(startDateA, endDateA, startDateB, endDateB));
     }
 
+    @Test
+    public void testIsValidDateRange_SameDates() {
+        LocalDateTime startDate = LocalDateTime.of(2024, Month.JULY, 21, 20, 20);
+        LocalDateTime endDate = LocalDateTime.of(2024, Month.JULY, 21, 20, 20);
+
+        assertFalse(BookingUtils.isValidDateRange(startDate, endDate));
+    }
+
+    @Test
+    public void testIsValidDateRange_ValidDates() {
+        LocalDateTime startDate = LocalDateTime.of(2024, Month.JULY, 21, 20, 20);
+        LocalDateTime endDate = LocalDateTime.of(2024, Month.JULY, 21, 21, 20);
+
+        assertTrue(BookingUtils.isValidDateRange(startDate, endDate));
+    }
+
+    @Test
+    public void testIsValidDateRange_ReversedDates() {
+        LocalDateTime startDate = LocalDateTime.of(2024, Month.JULY, 22, 20, 20);
+        LocalDateTime endDate = LocalDateTime.of(2024, Month.JULY, 21, 21, 20);
+
+        assertFalse(BookingUtils.isValidDateRange(startDate, endDate));
+    }
 }

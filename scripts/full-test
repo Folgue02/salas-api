@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from cursesmenu import CursesMenu
-from cursesmenu.items import FunctionItem
+from PyInquirer import prompt
+import os
 from typing import Any
 from colorama import init
 from termcolor import colored
@@ -12,6 +12,12 @@ init()
 
 URL = "http://localhost:8080/"
 DATE_FORMAT = "%d-%m-%Y %H:%M"
+
+def cls():
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
 
 def printe(*msgs: object):
     for msg in msgs:
@@ -79,31 +85,77 @@ def query_all_rooms():
     enter_to_continue()
 
 def query_room_by_id():
-    do_request(f"/salas/{input('ID de la sala: ')}", "get")
+    question = [
+        {
+            "type": "input",
+            "name": "id",
+            "message": "ID de la sala: ",
+            "default": "1"
+        }
+    ]
+    do_request(f"/salas/{prompt.prompt(question)['id']}", "get")
     enter_to_continue()
 
 def create_room():
-    name = input("Nombre de la sala: ")
-    capacity = input("Capacidad de la sala: ")
-    location = input("Ubicacion de la sala: ")
+    questions = [
+        {
+            "type": "input",
+            "name": "name",
+            "message": "Nombre de la sala:",
+            "default": "Sala de reuniones"
+        },
+        {
+            "type": "input",
+            "name": "capacity",
+            "message": "Capacidad de la sala:",
+            "default": "20"
+        },
+        {
+            "type": "input",
+            "name": "location",
+            "message": "Ubicacion de la sala:",
+            "default": "A2"
+        },
+    ]
+    answers = prompt.prompt(questions)
     params = {
-        "name": name,
-        "capacity": capacity,
-        "location": location
+        "name": answers['name'],
+        "capacity": answers['capacity'],
+        "location": answers['location']
     }
     do_request(f"/salas/", "post", params)
     enter_to_continue()
 
 def update_room():
-    name = input("Nombre de la sala: ")
-    capacity = input("Capacidad de la sala: ")
-    location = input("Ubicacion de la sala: ")
+    questions = [
+        {
+            "type": "input",
+            "name": "room_id",
+            "message": "ID de la sala a modificar:"
+        },
+        {
+            "type": "input",
+            "name": "name",
+            "message": "Nombre de la sala:",
+        },
+        {
+            "type": "input",
+            "name": "capacity",
+            "message": "Capacidad de la sala:",
+        },
+        {
+            "type": "input",
+            "name": "location",
+            "message": "Ubicacion de la sala:",
+        },
+    ]
+    answers = prompt.prompt(questions)
     params = {
-        "name": name,
-        "capacity": capacity,
-        "location": location
+        "name": answers['name'],
+        "capacity": answers['capacity'],
+        "location": answers['location']
     }
-    do_request(f"/salas/{input('ID de la sala a modificar: ')}", "put", params)
+    do_request(f"/salas/{answers['room_id']}", "put", params)
     enter_to_continue()
 
 def delete_room():
@@ -121,36 +173,79 @@ def query_booking_by_id():
     enter_to_continue()
 
 def create_booking():
-    room_id = input("ID de la sala a reservar: ")
-    organizer = input("Nombre del organizador: ")
-    start_date = ask_for_date("Fecha de comienzo: ")
-    end_date = ask_for_date("Fecha de fin: ")
+    questions = [
+        {
+            "type": "input",
+            "name": "room_id",
+            "message": "ID de la sala a reservar:"
+        },
+        {
+            "type": "input",
+            "name": "organizer",
+            "message": "Nombre del organizador:",
+        },
+        {
+            "type": "input",
+            "name": "start_date",
+            "message": "Fecha de comienzo de la reserva:",
+        },
+        {
+            "type": "input",
+            "name": "end_date",
+            "message": "Fecha de final de la reserva:",
+        },
+    ]
+    answers = prompt.prompt(questions)
+
     do_request(
         f"/reservas/",
         "post",
         {
-            "roomId": room_id,
-            "organizer": organizer,
-            "startDate": start_date,
-            "endDate": end_date
+            "roomId": answers['room_id'],
+            "organizer": answers['organizer'],
+            "startDate": answers['start_date'],
+            "endDate": answers['end_date']
         }
     )
     enter_to_continue()
 
 def update_booking():
-    booking_id = input("ID de la reserva a actualizar: ")
-    room_id = input("ID de la sala a reservar: ")
-    organizer = input("Nombre del organizador: ")
-    start_date = ask_for_date("Fecha de comienzo: ")
-    end_date = ask_for_date("Fecha de fin: ")
+    questions = [
+        {
+            "type": "input",
+            "name": "booking_id",
+            "message": "ID de la reserva a modificar:"
+        },
+        {
+            "type": "input",
+            "name": "room_id",
+            "message": "ID de la sala a reservar:"
+        },
+        {
+            "type": "input",
+            "name": "organizer",
+            "message": "Nombre del organizador:",
+        },
+        {
+            "type": "input",
+            "name": "start_date",
+            "message": "Fecha de comienzo de la reserva:",
+        },
+        {
+            "type": "input",
+            "name": "end_date",
+            "message": "Fecha de final de la reserva:",
+        },
+    ]
+    answers = prompt.prompt(questions)
     do_request(
-        f"/reservas/{booking_id}",
+        f"/reservas/{answers['booking_id']}",
         "put",
         {
-            "roomId": room_id,
-            "organizer": organizer,
-            "startDate": start_date,
-            "endDate": end_date
+            "roomId": answers['room_id'],
+            "organizer": answers['organizer'],
+            "startDate": answers['start_date'],
+            "endDate": answers['end_date']
         }
     )
     enter_to_continue()
@@ -160,25 +255,75 @@ def delete_booking():
     do_request(f"/reservas/{booking_id}", "delete")
     enter_to_continue()
 
-def get_bookings_for_room():
+def query_booking_by_room_id():
     room_id = input("ID de la sala: ")
     do_request(f"/reservas/sala/{room_id}", "get")
     enter_to_continue()
 
 def main():
-    menu = CursesMenu("Cliente de gestion de salas y reservas")
-    menu.append_item(FunctionItem("Obtener salas", query_all_rooms))
-    menu.append_item(FunctionItem("Obtener sala por ID", query_room_by_id))
-    menu.append_item(FunctionItem("Crear sala", create_room))
-    menu.append_item(FunctionItem("Actualizar sala", update_room))
-    menu.append_item(FunctionItem("Eliminar sala", delete_room))
-    menu.append_item(FunctionItem("Obtener todas las reservas", query_all_bookings))
-    menu.append_item(FunctionItem("Obtener reserva por ID", query_booking_by_id))
-    menu.append_item(FunctionItem("Crear reserva", create_booking))
-    menu.append_item(FunctionItem("Actualizar reserva", update_booking))
-    menu.append_item(FunctionItem("Borrar reserva", delete_booking))
-    menu.append_item(FunctionItem("Obtener reservas para una sala", get_bookings_for_room))
-    menu.show()
+    opciones = [
+        "Obtener salas",
+        "Obtener sala por ID",
+        "Crear sala",
+        "Actualizar sala",
+        "Eliminar sala",
+        "Obtener todas las reservas",
+        "Obtener reserva por ID",
+        "Crear reserva",
+        "Actualizar reserva",
+        "Borrar reserva",
+        "Obtener reservas para una sala",
+        "Salir"
+    ]
+    prompt_questions = [
+        {
+            "type": "list",
+            "name": "option",
+            "message": "Selecciona una opcion",
+            "choices": opciones,
+        },
+    ]
+
+    while True:
+        cls()
+        print(f"====> {colored('CLIENTE DE GESTION DE SALAS Y RESERVAS', 'green')}")
+        opcion = opciones.index(prompt.prompt(prompt_questions)["option"])
+        match opcion:
+            case 0:
+                # "Obtener salas",
+                query_all_rooms()
+            case 1:
+                # "Obtener sala por ID",
+                query_room_by_id()
+            case 2:
+                # "Crear sala",
+                create_room()
+            case 3:
+                # "Actualizar sala",
+                update_room()
+            case 4:
+                # "Eliminar sala",
+                delete_room()
+            case 5:
+                # "Obtener todas las reservas",
+                query_all_bookings()
+            case 6:
+                # "Obtener reserva por ID",
+                query_booking_by_id()
+            case 7:
+                # "Crear reserva",
+                create_booking()
+            case 8:
+                # "Actualizar reserva",
+                update_booking()
+            case 9:
+                # "Borrar reserva",
+                delete_booking()
+            case 10:
+                # "Obtener reservas para una sala"
+                query_booking_by_room_id()
+            case 11:
+                exit()
 
 if __name__ == "__main__":
     main()
