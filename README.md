@@ -50,7 +50,7 @@ Some of the parameters have a certain format:
 | `/salas/`     | `GET`      | *None*                                      | A list containing all the room objects stored in the database. | *None*                                                                                                                            |
 | `/salas/{id}` | `GET`      | *None*                                      | The object of the room with the specified id.                  | `404` is returned if the room doesn't exist.                                                                                      |
 | `/salas/`     | `POST`     | `name`, `capacity` and `location`           | The object of the room that has been created.                  | `400`, if the capacity is < 0 or the location doesnt follow the format of character + number.                                     |
-| `/salas/`     | `PUT`      | `name`, `capacity`, `location` and `roomId` | The object of the room after the update.                       | `400`, if the capacity is < 0 or the location doesnt follow the format of character + number.<br>`404` if the room doesn't exist. |
+| `/salas/{id}`     | `PUT`      | `name`, `capacity`, `location` and `roomId` | The object of the room after the update.                       | `400`, if the capacity is < 0 or the location doesnt follow the format of character + number.<br>`404` if the room doesn't exist. |
 
 ### 3.2 Booking management
 
