@@ -38,6 +38,11 @@ This API uses two main route prefixes:
 - `/reservas` to manage the bookings.
 - `/salas` to manage the rooms.
 
+Some of the parameters have a certain format:
+
+- Dates have to follow the following format: `dd-MM-yyyy HH:mm`
+- The location of a room is composed of a character and a number: `A2`
+
 ### 3.1 Room management
 
 | **Endpoint**  | **Method** | **Request params**                          | **Returns**                                                    | **Errors**                                                                                                                        |
@@ -49,13 +54,14 @@ This API uses two main route prefixes:
 
 ### 3.2 Booking management
 
-| **Endpoint**     | **Method** | **Request params**                               | **Returns**                                                       | **Errors**                                                                                                                                                 |
-|------------------|------------|--------------------------------------------------|-------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `/reservas/`     | `GET`      | *None*                                           | A list containing all the booking objects stored in the database. | *None*                                                                                                                                                     |
-| `/reservas/{id}` | `GET`      | *None*                                           | The object of the booking with the specified id.                  | `404` is returned if the booking doesn't exist.                                                                                                            |
-| `/reservas/`     | `POST`     | `organizer`, `startDate`, `endDate` and `roomId` | The object of the booking that has been created.                  | `404`, if the there is no room with such ID.<br>`400` if the format of the date is invalid.<br>`409` if the room is already booked for the time range.     |
-| `/reservas/{id}` | `PUT`      | `organizer`, `startDate`, `endDate` and `roomId` | The object of the booking after the update.                       | `400`, if the format of the date is invalid.<br>`404` if the room or the booking doesn't exist.<br>`409` if the room is already booked for the time range. |
-| `/reservas/{id}` | `DELETE`   | *None*                                           | The object of the booking that has been removed.                  | `404` if the booking doesn't exist.                                                                                                                        |
+| **Endpoint**          | **Method** | **Request params**                               | **Returns**                                                       | **Errors**                                                                                                                                                 |
+|-----------------------|------------|--------------------------------------------------|-------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/reservas/`          | `GET`      | *None*                                           | A list containing all the booking objects stored in the database. | *None*                                                                                                                                                     |
+| `/reservas/{id}`      | `GET`      | *None*                                           | The object of the booking with the specified id.                  | `404` is returned if the booking doesn't exist.                                                                                                            |
+| `/reservas/`          | `POST`     | `organizer`, `startDate`, `endDate` and `roomId` | The object of the booking that has been created.                  | `404`, if the there is no room with such ID.<br>`400` if the format of the date is invalid.<br>`409` if the room is already booked for the time range.     |
+| `/reservas/{id}`      | `PUT`      | `organizer`, `startDate`, `endDate` and `roomId` | The object of the booking after the update.                       | `400`, if the format of the date is invalid.<br>`404` if the room or the booking doesn't exist.<br>`409` if the room is already booked for the time range. |
+| `/reservas/{id}`      | `DELETE`   | *None*                                           | The object of the booking that has been removed.                  | `404` if the booking doesn't exist.                                                                                                                        |
+| `/reservas/sala/{id}` | `GET`      | *None*                                           | A list of the bookings made for the room with the specified ID.   | *None* (*If there is no room with such ID then an empty list gets returned*).                                                                              |
 
 ## 4. Client script
 
@@ -70,3 +76,5 @@ On Windows:
 ```bash
 python scripts/full-test
 ```
+
+![](client-showcase.gif)
