@@ -1,12 +1,14 @@
-package me.folgue.salas.rooms;
+package me.folgue.salas.rooms.controller;
 
 import java.util.List;
 import lombok.extern.java.Log;
+import me.folgue.salas.rooms.service.RoomService;
 import me.folgue.salas.rooms.exceptions.RoomAlreadyExistsException;
 import me.folgue.salas.rooms.exceptions.RoomControllerException;
 import me.folgue.salas.rooms.exceptions.RoomDoesntExistException;
 import me.folgue.salas.rooms.exceptions.RoomInvalidCapacityException;
 import me.folgue.salas.rooms.exceptions.RoomInvalidLocationException;
+import me.folgue.salas.rooms.model.Room;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;

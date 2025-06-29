@@ -1,8 +1,12 @@
-package me.folgue.salas.bookings;
+package me.folgue.salas.bookings.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import me.folgue.salas.bookings.BookingUtils;
+import me.folgue.salas.bookings.model.Booking;
+import me.folgue.salas.bookings.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,9 +1,9 @@
-package me.folgue.salas.rooms;
+package me.folgue.salas.rooms.repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import me.folgue.salas.rooms.model.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package me.folgue.salas.bookings;
+package me.folgue.salas.bookings.model;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.folgue.salas.rooms.Room;
+import me.folgue.salas.rooms.model.Room;
 
 /**
  * Represents the booking of a {@link Room} in specified range of time.

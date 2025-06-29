@@ -1,15 +1,18 @@
-package me.folgue.salas.bookings;
+package me.folgue.salas.bookings.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
 import lombok.extern.java.Log;
+import me.folgue.salas.bookings.service.BookingService;
+import me.folgue.salas.bookings.BookingUtils;
 import me.folgue.salas.bookings.exceptions.BookingConflictException;
 import me.folgue.salas.bookings.exceptions.BookingInvalidDatesException;
 import me.folgue.salas.bookings.exceptions.BookingControllerException;
 import me.folgue.salas.bookings.exceptions.BookingDoesntExistException;
-import me.folgue.salas.rooms.RoomService;
-import me.folgue.salas.rooms.Room;
+import me.folgue.salas.bookings.model.Booking;
+import me.folgue.salas.rooms.service.RoomService;
+import me.folgue.salas.rooms.model.Room;
 import me.folgue.salas.rooms.exceptions.RoomControllerException;
 import me.folgue.salas.rooms.exceptions.RoomDoesntExistException;
 import org.springframework.format.annotation.DateTimeFormat;

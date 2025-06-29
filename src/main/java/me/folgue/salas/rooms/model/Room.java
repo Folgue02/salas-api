@@ -1,4 +1,4 @@
-package me.folgue.salas.rooms;
+package me.folgue.salas.rooms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
@@ -12,7 +12,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.folgue.salas.bookings.Booking;
+import me.folgue.salas.bookings.model.Booking;
 
 @Entity
 @NoArgsConstructor

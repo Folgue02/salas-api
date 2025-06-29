@@ -1,8 +1,10 @@
-package me.folgue.salas.rooms;
+package me.folgue.salas.rooms.service;
 
 import java.util.List;
 import java.util.Optional;
-import me.folgue.salas.bookings.BookingRepository;
+import me.folgue.salas.bookings.repository.BookingRepository;
+import me.folgue.salas.rooms.model.Room;
+import me.folgue.salas.rooms.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
 @Service

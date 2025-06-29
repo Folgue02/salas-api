@@ -1,6 +1,6 @@
 package me.folgue.salas.rooms.exceptions;
 
-import me.folgue.salas.rooms.Room;
+import me.folgue.salas.rooms.model.Room;
 
 /**
  * Represents the scenario where either a {@link Room} contains a location with

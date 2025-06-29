@@ -1,7 +1,9 @@
-package me.folgue.salas.bookings;
+package me.folgue.salas.bookings.repository;
 
 import java.util.List;
 import java.util.Optional;
+
+import me.folgue.salas.bookings.model.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
