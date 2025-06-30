@@ -1,12 +1,8 @@
 package me.folgue.salas.bookings.model;
 
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +16,7 @@ import me.folgue.salas.rooms.model.Room;
  * @author Folgue02
  */
 @Entity
+@Table(name = "bookings")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

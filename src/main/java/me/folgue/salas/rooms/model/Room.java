@@ -2,12 +2,8 @@ package me.folgue.salas.rooms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +11,7 @@ import lombok.NoArgsConstructor;
 import me.folgue.salas.bookings.model.Booking;
 
 @Entity
+@Table(name = "rooms")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
